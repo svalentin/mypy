@@ -319,4 +319,3 @@ L0:
     r9 = 'backslashreplace'
     r10 = CPy_Encode(s, r8, r9)
     return 1
-

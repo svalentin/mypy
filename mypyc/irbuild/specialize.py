@@ -89,12 +89,12 @@ from mypyc.primitives.dict_ops import (
     dict_values_op,
 )
 from mypyc.primitives.list_ops import new_list_set_item_op
-from mypyc.primitives.tuple_ops import new_tuple_set_item_op
 from mypyc.primitives.str_ops import (
-    str_encode_utf8_strict,
     str_encode_ascii_strict,
     str_encode_latin1_strict,
+    str_encode_utf8_strict,
 )
+from mypyc.primitives.tuple_ops import new_tuple_set_item_op
 
 # Specializers are attempted before compiling the arguments to the
 # function.  Specializers can return None to indicate that they failed
@@ -716,11 +716,20 @@ def str_encode_fast_path(builder: IRBuilder, expr: CallExpr, callee: RefExpr) ->
         encoding = expr.args[0].value.lower().replace("-", "_")
 
     # Specialized encodings and their accepted aliases
-    if encoding in ['u8', 'utf', 'utf8', 'utf_8', 'cp65001']:
+    if encoding in ["u8", "utf", "utf8", "utf_8", "cp65001"]:
         return builder.call_c(str_encode_utf8_strict, [builder.accept(callee.expr)], expr.line)
     elif encoding in ["ascii", "646", "us_ascii"]:
         return builder.call_c(str_encode_ascii_strict, [builder.accept(callee.expr)], expr.line)
-    elif encoding in ['iso_8859_1', 'iso8859_1', '8859', 'cp819', 'latin', 'latin1', 'latin_1', 'l1']:
+    elif encoding in [
+        "iso_8859_1",
+        "iso8859_1",
+        "8859",
+        "cp819",
+        "latin",
+        "latin1",
+        "latin_1",
+        "l1",
+    ]:
         return builder.call_c(str_encode_latin1_strict, [builder.accept(callee.expr)], expr.line)
 
     return None
